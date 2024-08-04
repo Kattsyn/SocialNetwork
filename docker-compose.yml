@@ -1,0 +1,27 @@
+version: '3.1'
+
+services:
+  client-backend:
+    image: kattsyn/socialnet_back_java:latest
+    ports:
+      - "8189:8189"
+    depends_on:
+      - postgres
+    environment:
+      - SERVER_PORT=8189
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/social_network_db
+      - SPRING_DATASOURCE_USER=kattsyn
+      - SPRING_DATASOURCE_PASSWORD=katt
+      - SPRING_JPA_HIBERNATE_DDL-AUTO=update
+      - JWT_SECRET=984hg493gh0439rthr0429uruj2309yh937gc763fe87t3f89723gf
+      - JWT_LIFETIME=30m
+      - API_PATH=api/v1
+  postgres:
+    image: postgres:latest
+    container_name: social_network
+    environment:
+      POSTGRES_USER: kattsyn
+      POSTGRES_PASSWORD: katt
+      POSTGRES_DB: social_network_db
+    ports:
+      - "5432:5432"
