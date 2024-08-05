@@ -46,6 +46,12 @@ public class AuthService {
         if (userService.findByUsername(registrationUserDto.getUsername()).isPresent()) {
             return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пользователь с указанным именем уже существует"), HttpStatus.BAD_REQUEST);
         }
+        if (userService.findByEmail(registrationUserDto.getEmail()).isPresent()) {
+            return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пользователь с указанной почтой уже существует"), HttpStatus.BAD_REQUEST);
+        }
+        if (userService.findByPhoneNumber(registrationUserDto.getPhoneNumber()).isPresent()) {
+            return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пользователь с указанным номером телефона уже существует"), HttpStatus.BAD_REQUEST);
+        }
         User user = userService.createNewUser(registrationUserDto);
         /*
         Можно сделать разный возврат этого метода:
