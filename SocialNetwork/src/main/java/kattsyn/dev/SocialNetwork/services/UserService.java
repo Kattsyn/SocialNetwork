@@ -3,11 +3,10 @@ package kattsyn.dev.SocialNetwork.services;
 import kattsyn.dev.SocialNetwork.dtos.RegistrationUserDto;
 import kattsyn.dev.SocialNetwork.dtos.UserDto;
 import kattsyn.dev.SocialNetwork.entities.User;
-import kattsyn.dev.SocialNetwork.exceptions.AppError;
+import kattsyn.dev.SocialNetwork.exceptions.AppException;
 import kattsyn.dev.SocialNetwork.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,26 +26,37 @@ public class UserService implements UserDetailsService {
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 
+    @Transactional
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
+    @Transactional
     public Optional<User> findByPhoneNumber(String phoneNumber) {
         return userRepository.findByPhoneNumber(phoneNumber);
     }
 
-    public Optional<User> findById(Long id) {
-        return userRepository.findById(id);
+    @Transactional
+    public Optional<User> findById(Long id) throws AppException {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            return userOptional;
+        } else {
+            throw new AppException(HttpStatus.NOT_FOUND, "Пользователь не найден");
+        }
     }
 
+    @Transactional
     public List<User> getUsers() {
         return userRepository.findAll();
     }
 
+    @Transactional
     public User save(User user) {
         return userRepository.save(user);
     }
@@ -66,6 +76,7 @@ public class UserService implements UserDetailsService {
         );
     }
 
+    @Transactional
     public User createNewUser(RegistrationUserDto registrationUserDto) {
         User user = new User();
         user.setUsername(registrationUserDto.getUsername());
@@ -79,7 +90,8 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
-    public ResponseEntity<?> changeUserData(Optional<User> user, UserDto userDto) {
+    @Transactional
+    public User changeUserData(Optional<User> user, UserDto userDto) throws AppException {
         if (user.isPresent()) {
             if (userDto.getName() != null) {
                 user.get().setName(userDto.getName());
@@ -99,9 +111,9 @@ public class UserService implements UserDetailsService {
             if (userDto.getPhoneNumber() != null) {
                 user.get().setPhoneNumber(userDto.getPhoneNumber());
             }
-            return new ResponseEntity<>(save(user.get()), HttpStatus.OK);
+            return save(user.get());
         } else {
-            return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "User not found"), HttpStatus.BAD_REQUEST);
+            throw new AppException(HttpStatus.NOT_FOUND, "Пользователь не найден");
         }
     }
 }

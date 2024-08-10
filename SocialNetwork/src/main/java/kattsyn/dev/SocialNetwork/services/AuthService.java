@@ -1,20 +1,20 @@
 package kattsyn.dev.SocialNetwork.services;
 
+import kattsyn.dev.SocialNetwork.exceptions.AppException;
 import kattsyn.dev.SocialNetwork.utils.JwtTokenUtils;
 import kattsyn.dev.SocialNetwork.dtos.JwtRequest;
 import kattsyn.dev.SocialNetwork.dtos.JwtResponse;
 import kattsyn.dev.SocialNetwork.dtos.RegistrationUserDto;
 import kattsyn.dev.SocialNetwork.dtos.UserDto;
 import kattsyn.dev.SocialNetwork.entities.User;
-import kattsyn.dev.SocialNetwork.exceptions.AppError;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,34 +23,36 @@ public class AuthService {
     private final JwtTokenUtils jwtTokenUtils;
     private final AuthenticationManager authenticationManager;
 
-    //На выходе стоит ResponseEntity<?> потому что на выходе может вернуться что угодно, в т.ч. и ошибка.
-    //По хорошему такую логику спрятать в AuthService, а исключения обрабатывать через глобальный перехват исключений
-    public ResponseEntity<?> createAuthToken(JwtRequest authRequest) {
+    @Transactional
+    public JwtResponse createAuthToken(JwtRequest authRequest) throws AppException {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             authRequest.getUsername(),
                             authRequest.getPassword()));
         } catch (BadCredentialsException e) {
-            return new ResponseEntity<>(new AppError(HttpStatus.UNAUTHORIZED.value(), "Неправильный логин или пароль"), HttpStatus.UNAUTHORIZED);
+            throw new AppException(HttpStatus.UNAUTHORIZED, "Неправильный логин или пароль");
         }
         UserDetails userDetails = userService.loadUserByUsername(authRequest.getUsername()); //достаем UserDetails по username из запроса
         String token = jwtTokenUtils.generateToken(userDetails);
-        return ResponseEntity.ok(new JwtResponse(token));
+        return new JwtResponse(token);
     }
 
-    public ResponseEntity<?> createNewUser(RegistrationUserDto registrationUserDto) {
+    @Transactional
+    public UserDto createNewUser(RegistrationUserDto registrationUserDto) throws AppException {
+
         if (!registrationUserDto.getPassword().equals(registrationUserDto.getConfirmPassword())) {
-            return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пароли не совпадают"), HttpStatus.BAD_REQUEST);
+            //return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пароли не совпадают"), HttpStatus.BAD_REQUEST);
+            throw new AppException(HttpStatus.BAD_REQUEST, "Пароли не совпадают");
         }
         if (userService.findByUsername(registrationUserDto.getUsername()).isPresent()) {
-            return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пользователь с указанным именем уже существует"), HttpStatus.BAD_REQUEST);
+            throw new AppException(HttpStatus.BAD_REQUEST, "Пользователь с указанным именем уже существует");
         }
         if (userService.findByEmail(registrationUserDto.getEmail()).isPresent()) {
-            return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пользователь с указанной почтой уже существует"), HttpStatus.BAD_REQUEST);
+            throw new AppException(HttpStatus.BAD_REQUEST, "Пользователь с указанной почтой уже существует");
         }
         if (userService.findByPhoneNumber(registrationUserDto.getPhoneNumber()).isPresent()) {
-            return new ResponseEntity<>(new AppError(HttpStatus.BAD_REQUEST.value(), "Пользователь с указанным номером телефона уже существует"), HttpStatus.BAD_REQUEST);
+            throw new AppException(HttpStatus.BAD_REQUEST, "Пользователь с указанным номером телефона уже существует");
         }
         User user = userService.createNewUser(registrationUserDto);
         /*
@@ -59,7 +61,7 @@ public class AuthService {
         2. из registrationUserDto собрать UserDetails и сгенерировать JwtToken
         3. вернуть User'а, но тогда через UserDto
          */
-        return ResponseEntity.ok(new UserDto(
+        return new UserDto(
                 user.getId(),
                 user.getName(),
                 user.getLastName(),
@@ -67,6 +69,6 @@ public class AuthService {
                 user.getBirthDate(),
                 user.getEmail(),
                 user.getPhoneNumber()
-        ));
+        );
     }
 }

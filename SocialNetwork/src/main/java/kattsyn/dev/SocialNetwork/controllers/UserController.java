@@ -6,8 +6,10 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import kattsyn.dev.SocialNetwork.dtos.UserDto;
 import kattsyn.dev.SocialNetwork.entities.User;
+import kattsyn.dev.SocialNetwork.exceptions.AppException;
 import kattsyn.dev.SocialNetwork.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +34,7 @@ public class UserController {
     @GetMapping("/{id}")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "Получение информации о пользователе", description = "Возвращает информацию о пользователе по ID. Только для админов.")
-    public Optional<User> findById(@PathVariable Long id) {
+    public Optional<User> findById(@PathVariable Long id) throws AppException {
         return userService.findById(id);
     }
 
@@ -46,14 +48,14 @@ public class UserController {
     @PatchMapping("/edit/{id}")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "Изменение информации пользователя", description = "Изменяет информацию о пользователе по ID. Только для админов.")
-    public ResponseEntity<?> changeUserDataById(@PathVariable Long id, @RequestBody UserDto userDto) {
-        return userService.changeUserData(userService.findById(id), userDto);
+    public ResponseEntity<?> changeUserDataById(@PathVariable Long id, @RequestBody UserDto userDto) throws AppException {
+        return new ResponseEntity<>(userService.changeUserData(userService.findById(id), userDto), HttpStatus.OK);
     }
 
     @PatchMapping("/edit")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "Изменение информации пользователя", description = "Изменяет информацию авторизованного пользователя. Для всех авторизованных.")
-    public ResponseEntity<?> changeCurrentUserData(@RequestBody UserDto userDto, Principal principal) {
-        return userService.changeUserData(userService.findByUsername(principal.getName()), userDto);
+    public ResponseEntity<?> changeCurrentUserData(@RequestBody UserDto userDto, Principal principal) throws AppException {
+        return new ResponseEntity<>(userService.changeUserData(userService.findByUsername(principal.getName()), userDto), HttpStatus.OK);
     }
 }
