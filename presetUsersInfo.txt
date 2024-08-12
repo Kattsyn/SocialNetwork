@@ -1,2 +1,0 @@
-username: user pass: 100
-username: admin pass: 100
