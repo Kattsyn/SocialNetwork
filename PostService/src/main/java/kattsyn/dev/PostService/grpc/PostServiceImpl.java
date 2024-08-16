@@ -4,6 +4,7 @@ import io.grpc.stub.StreamObserver;
 import kattsyn.dev.PostService.entities.Post;
 import kattsyn.dev.PostService.repositories.PostRepository;
 import lombok.AllArgsConstructor;
+import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
-@Service
+@GrpcService
 public class PostServiceImpl extends PostServiceGrpc.PostServiceImplBase {
     PostRepository postRepository;
 

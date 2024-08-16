@@ -57,6 +57,14 @@ class PostServiceApplicationTests {
 	}
 
 	@Test
+	void getPostByIdTest() {
+		PostServiceOuterClass.GetPostByIdRequest request = PostServiceOuterClass.GetPostByIdRequest.newBuilder()
+				.setPostId(2)
+				.build();
+		postService.getPostById(request, null);
+	}
+
+	@Test
 	void getPostsWithPaginationTest() {
 		PostServiceOuterClass.GetPostsRequest request = PostServiceOuterClass.GetPostsRequest.newBuilder()
 				.setPage(0)
