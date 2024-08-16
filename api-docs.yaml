@@ -1,0 +1,285 @@
+openapi: 3.0.1
+info:
+  title: SocialNetwork API
+  description: SocialNetwork
+  contact:
+    name: Kattsyn Vladimir
+  version: 1.0.0
+servers:
+- url: http://localhost:8189
+  description: Generated server url
+tags:
+- name: Аутентификация
+  description: Для аутентификации и регистрации
+paths:
+  /api/v1/registration:
+    post:
+      tags:
+      - Аутентификация
+      summary: Регистрация нового пользователя
+      description: "Создает нового пользователя по логину, паролю и другой информа\
+        ции пользователя."
+      operationId: createNewUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegistrationUserDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/v1/auth:
+    post:
+      tags:
+      - Аутентификация
+      summary: Аутентификация
+      description: "Аутентификация пользователя по логину и паролю, возвращает JWT"
+      operationId: createAuthToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JwtRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/v1/edit:
+    patch:
+      tags:
+      - Пользователи
+      summary: Изменение информации пользователя
+      description: Изменяет информацию авторизованного пользователя. Для всех авторизованных.
+      operationId: changeCurrentUserData
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+      - JWT: []
+  /api/v1/edit/{id}:
+    patch:
+      tags:
+      - Пользователи
+      summary: Изменение информации пользователя
+      description: Изменяет информацию о пользователе по ID. Только для админов.
+      operationId: changeUserDataById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+      security:
+      - JWT: []
+  /api/v1/users:
+    get:
+      tags:
+      - Пользователи
+      summary: Получение информации о всех пользователях
+      description: Возвращает список пользователей. Только для админов.
+      operationId: users
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+      security:
+      - JWT: []
+  /api/v1/users/{id}:
+    get:
+      tags:
+      - Пользователи
+      summary: Получение информации о пользователе
+      description: Возвращает информацию о пользователе по ID. Только для админов.
+      operationId: findById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/User"
+      security:
+      - JWT: []
+  /api/v1/users/info:
+    get:
+      tags:
+      - Пользователи
+      summary: Получение информации о пользователе
+      description: Возвращает информацию об авторизованном пользователе. Для всех
+        авторизованных.
+      operationId: findCurrentUser
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/User"
+      security:
+      - JWT: []
+components:
+  schemas:
+    RegistrationUserDto:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Логин пользователя
+          example: ivan123
+        password:
+          type: string
+          description: Пароль пользователя
+          example: secret_pass
+        confirmPassword:
+          type: string
+          description: Повторный ввод пароля пользователя
+          example: secret_pass
+        name:
+          type: string
+          description: Имя пользователя
+          example: Ivan
+        lastName:
+          type: string
+          description: Фамилия пользователя
+          example: Ivanov
+        birthDate:
+          type: string
+          description: Дата рождения пользователя формата yyyy-mm-dd
+          format: date
+          example: 2003-02-25
+        email:
+          type: string
+          description: Адрес электронной почты пользователя
+          example: ivan123@gmail.com
+        phoneNumber:
+          type: string
+          description: Номер телефона пользователя
+          example: "+79209992211"
+    JwtRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Логин пользователя
+          example: ivan123
+        password:
+          type: string
+          description: Пароль пользователя
+          example: secret_pass
+    UserDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+          example: 12345678
+        name:
+          type: string
+          description: Имя пользователя
+          example: Ivan
+        lastName:
+          type: string
+          description: Фамилия пользователя
+          example: Ivanov
+        username:
+          type: string
+          description: Логин пользователя
+          readOnly: true
+          example: ivan123
+        birthDate:
+          type: string
+          description: Дата рождения пользователя формата yyyy-mm-dd
+          format: date
+          example: 2003-02-25
+        email:
+          type: string
+          description: Адрес электронной почты пользователя
+          example: ivan123@gmail.com
+        phoneNumber:
+          type: string
+          description: Номер телефона пользователя
+          example: "+79209992211"
+    Role:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        name:
+          type: string
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        lastName:
+          type: string
+        username:
+          type: string
+        password:
+          type: string
+        birthDate:
+          type: string
+          format: date
+        email:
+          type: string
+        phoneNumber:
+          type: string
+        roles:
+          type: array
+          items:
+            $ref: "#/components/schemas/Role"
+  securitySchemes:
+    JWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
