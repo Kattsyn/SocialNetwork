@@ -5,10 +5,8 @@ import lombok.*;
 
 @Data
 @Entity
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 @Table(name = "posts")
 public class Post {
     @Id
