@@ -22,3 +22,10 @@ jwt:
   lifetime: 30m
 api:
   path: api/v1
+grpc:
+  server:
+    address: postservice:9090
+  client:
+    post-service:
+      #address: static://post_service:9090
+      negotiation-type: plaintext

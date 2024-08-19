@@ -3,6 +3,8 @@ package kattsyn.dev.PostService.grpc;
 import io.grpc.stub.StreamObserver;
 import kattsyn.dev.PostService.entities.Post;
 import kattsyn.dev.PostService.repositories.PostRepository;
+import kattsyn.dev.SocialNetwork.grpc.PostServiceGrpc;
+import kattsyn.dev.SocialNetwork.grpc.PostServiceOuterClass;
 import lombok.AllArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.data.domain.Page;

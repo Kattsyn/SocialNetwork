@@ -1,12 +1,10 @@
 package kattsyn.dev.PostService;
 
-import io.grpc.stub.StreamObserver;
-import kattsyn.dev.PostService.grpc.PostServiceGrpc;
-import kattsyn.dev.PostService.grpc.PostServiceOuterClass;
+import kattsyn.dev.PostService.grpc.PostServiceImpl;
+import kattsyn.dev.SocialNetwork.grpc.PostServiceOuterClass;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import kattsyn.dev.PostService.grpc.PostServiceImpl;
 
 @SpringBootTest
 class PostServiceApplicationTests {

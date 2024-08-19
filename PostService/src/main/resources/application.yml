@@ -2,7 +2,7 @@ spring:
   application:
     name: PostService
   datasource:
-    url: jdbc:postgresql://localhost:5432/post_service_db
+    url: jdbc:postgresql://localhost:5433/post_service_db
     username: kattsyn
     password: katt
     driver-class-name: org.postgresql.Driver
