@@ -24,6 +24,8 @@ import java.util.Optional;
 public class UserController {
     private final UserService userService;
 
+    //todo: добавить удаление пользователя для авторизованного пользователя
+
     @GetMapping
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "Получение информации о всех пользователях", description = "Возвращает список пользователей. Только для админов.")

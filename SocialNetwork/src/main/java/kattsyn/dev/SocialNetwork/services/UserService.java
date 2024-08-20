@@ -116,4 +116,6 @@ public class UserService implements UserDetailsService {
             throw new AppException(HttpStatus.NOT_FOUND, "Пользователь не найден");
         }
     }
+
+    //todo: добавить удаление пользователя
 }
