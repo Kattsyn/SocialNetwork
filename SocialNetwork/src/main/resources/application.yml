@@ -6,7 +6,7 @@ spring:
   application:
     name: SocialNetwork
   datasource:
-    url: jdbc:postgresql://localhost:5432/social_network_db
+    url: jdbc:postgresql://localhost:5432/user_service_db
     username: kattsyn
     password: katt
     driver-class-name: org.postgresql.Driver

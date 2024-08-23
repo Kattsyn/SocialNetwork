@@ -1,6 +1,12 @@
 syntax = "proto3";
 
-package kattsyn.dev.SocialNetwork.grpc;
+import "google/protobuf/timestamp.proto";
+
+package kattsyn.dev.grpc;
+
+option java_package = "kattsyn.dev.grpc";
+option java_outer_classname = "PostServiceProto";
+option java_multiple_files = true;
 
 message CreatePostRequest {
   int64 author_id = 1;
@@ -26,6 +32,7 @@ message EditPostRequest {
 
 message DeletePostRequest {
   int64 postId = 1;
+  int64 authorId = 2;
 }
 
 message PostResponse {
@@ -40,15 +47,31 @@ message PostPageResponse {
 }
 
 message EditPostResponse {
-  string response = 1;
+  SuccessResponse response = 1;
 }
 
 message DeletePostResponse {
-  string response = 1;
+  SuccessResponse response = 1;
 }
 
 message CreatePostResponse {
-  string response = 1;
+  SuccessResponse response = 1;
+}
+
+enum SuccessResponse {
+  OK = 0;
+  CREATED = 1;
+  NO_CONTENT = 2;
+}
+
+enum PostServiceErrorCode {
+  POST_NOT_FOUND = 0;
+  FORBIDDEN = 1;
+}
+
+message PostServiceExceptionResponse {
+  google.protobuf.Timestamp timestamp = 1;
+  PostServiceErrorCode error_code = 2;
 }
 
 service PostService {

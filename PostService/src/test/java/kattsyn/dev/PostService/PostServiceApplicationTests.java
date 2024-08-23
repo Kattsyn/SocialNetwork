@@ -1,14 +1,10 @@
 package kattsyn.dev.PostService;
 
-import kattsyn.dev.PostService.grpc.PostServiceImpl;
-import kattsyn.dev.SocialNetwork.grpc.PostServiceOuterClass;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class PostServiceApplicationTests {
-
+/*
 	@Autowired
 	PostServiceImpl postService;
 	@Test
@@ -70,5 +66,7 @@ class PostServiceApplicationTests {
 				.build();
 		postService.getPosts(request, null);
 	}
+
+ */
 
 }

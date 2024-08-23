@@ -1,1 +1,3 @@
 rootProject.name = 'SocialNetwork'
+include ':grpc'
+project(':grpc').projectDir = file('../grpc')

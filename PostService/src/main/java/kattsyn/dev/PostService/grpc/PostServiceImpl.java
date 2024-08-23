@@ -2,8 +2,7 @@ package kattsyn.dev.PostService.grpc;
 
 import io.grpc.stub.StreamObserver;
 import kattsyn.dev.PostService.mappers.GrpcToMainService;
-import kattsyn.dev.SocialNetwork.grpc.PostServiceGrpc;
-import kattsyn.dev.SocialNetwork.grpc.PostServiceOuterClass;
+import kattsyn.dev.grpc.*;
 import lombok.AllArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
 
@@ -14,27 +13,29 @@ public class PostServiceImpl extends PostServiceGrpc.PostServiceImplBase {
     private final GrpcToMainService mapper;
 
     @Override
-    public void getPostById(PostServiceOuterClass.GetPostByIdRequest request, StreamObserver<PostServiceOuterClass.PostResponse> responseObserver) {
+    public void getPostById(GetPostByIdRequest request, StreamObserver<PostResponse> responseObserver) {
         mapper.getPostById(request, responseObserver);
     }
 
     @Override
-    public void getPosts(PostServiceOuterClass.GetPostsRequest request, StreamObserver<PostServiceOuterClass.PostPageResponse> responseObserver) {
+    public void getPosts(GetPostsRequest request, StreamObserver<PostPageResponse> responseObserver) {
         mapper.getPosts(request, responseObserver);
     }
 
     @Override
-    public void editPost(PostServiceOuterClass.EditPostRequest request, StreamObserver<PostServiceOuterClass.EditPostResponse> responseObserver) {
+    public void editPost(EditPostRequest request, StreamObserver<EditPostResponse> responseObserver) {
         mapper.editPost(request, responseObserver);
     }
 
     @Override
-    public void deletePost(PostServiceOuterClass.DeletePostRequest request, StreamObserver<PostServiceOuterClass.DeletePostResponse> responseObserver) {
+    public void deletePost(DeletePostRequest request, StreamObserver<DeletePostResponse> responseObserver) {
         mapper.deletePost(request, responseObserver);
     }
 
     @Override
-    public void createPost(PostServiceOuterClass.CreatePostRequest request, StreamObserver<PostServiceOuterClass.CreatePostResponse> responseObserver) {
+    public void createPost(CreatePostRequest request, StreamObserver<CreatePostResponse> responseObserver) {
         mapper.createPost(request, responseObserver);
     }
 }
+
+

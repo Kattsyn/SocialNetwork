@@ -1,15 +1,14 @@
 package kattsyn.dev.PostService.mappers;
 
+
 import io.grpc.stub.StreamObserver;
-import kattsyn.dev.PostService.dtos.CreatePostRequest;
-import kattsyn.dev.PostService.dtos.DeletePostRequest;
-import kattsyn.dev.PostService.dtos.EditPostRequest;
-import kattsyn.dev.PostService.dtos.GetPostsRequest;
 import kattsyn.dev.PostService.entities.Post;
 import kattsyn.dev.PostService.services.PostServiceMain;
-import kattsyn.dev.SocialNetwork.grpc.PostServiceOuterClass;
+import kattsyn.dev.grpc.*;
+import kattsyn.dev.grpc.GetPostsRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
+import kattsyn.dev.PostService.dtos.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,12 +19,12 @@ public class GrpcToMainService {
 
     private final PostServiceMain postServiceMain;
 
-    public void getPostById(PostServiceOuterClass.GetPostByIdRequest request, StreamObserver<PostServiceOuterClass.PostResponse> responseObserver) {
+    public void getPostById(GetPostByIdRequest request, StreamObserver<PostResponse> responseObserver) {
 
         Optional<Post> post = postServiceMain.getPostById(request.getPostId());
 
         if (post.isPresent()) {
-            PostServiceOuterClass.PostResponse response = PostServiceOuterClass.PostResponse.newBuilder()
+            PostResponse response = PostResponse.newBuilder()
                     .setPostId(post.get().getPostId())
                     .setAuthorId(post.get().getAuthorId())
                     .setHeader(post.get().getHeader())
@@ -36,10 +35,10 @@ public class GrpcToMainService {
         }
     }
 
-    public void getPosts(PostServiceOuterClass.GetPostsRequest request, StreamObserver<PostServiceOuterClass.PostPageResponse> responseObserver) {
-        List<Post> list = postServiceMain.getPosts(new GetPostsRequest(request.getPage(), request.getCount()));
+    public void getPosts(GetPostsRequest request, StreamObserver<PostPageResponse> responseObserver) {
+        List<Post> list = postServiceMain.getPosts(new GetPostsRequestDTO(request.getPage(), request.getCount()));
 
-        List<PostServiceOuterClass.PostResponse> listResponses = list.stream().map(e -> PostServiceOuterClass.PostResponse
+        List<PostResponse> listResponses = list.stream().map(e -> PostResponse
                         .newBuilder()
                         .setPostId(e.getPostId())
                         .setAuthorId(e.getAuthorId())
@@ -47,7 +46,7 @@ public class GrpcToMainService {
                         .setText(e.getText()).build())
                 .toList();
 
-        PostServiceOuterClass.PostPageResponse response = PostServiceOuterClass.PostPageResponse.newBuilder()
+        PostPageResponse response = PostPageResponse.newBuilder()
                 .addAllPosts(listResponses)
                 .build();
 
@@ -55,45 +54,40 @@ public class GrpcToMainService {
         responseObserver.onCompleted();
     }
 
-    public void editPost(PostServiceOuterClass.EditPostRequest request, StreamObserver<PostServiceOuterClass.EditPostResponse> responseObserver) {
+    public void editPost(EditPostRequest request, StreamObserver<EditPostResponse> responseObserver) {
 
-        Post post = postServiceMain.editPost(new EditPostRequest(
+        Post post = postServiceMain.editPost(new EditPostRequestDTO(
                 request.getPostId(),
                 request.getUserId(),
                 request.getHeader(),
                 request.getText()
         ));
-
-        //todo: добавить что-то типа типа ответа, если всё хорошо, например через enum. На созвоне обсуждали
-        PostServiceOuterClass.EditPostResponse response = PostServiceOuterClass.EditPostResponse.newBuilder()
-                .setResponse("Edited Successfully")
+        EditPostResponse response = EditPostResponse.newBuilder()
+                .setResponse(SuccessResponse.OK)
                 .build();
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 
-    public void deletePost(PostServiceOuterClass.DeletePostRequest request, StreamObserver<PostServiceOuterClass.DeletePostResponse> responseObserver) {
+    public void deletePost(DeletePostRequest request, StreamObserver<DeletePostResponse> responseObserver) {
 
-        postServiceMain.deletePost(new DeletePostRequest(request.getPostId(), 1L /*todo: добавить в .proto второй аргумент */ ));
+        postServiceMain.deletePost(new DeletePostRequestDTO(request.getPostId(), request.getAuthorId() ));
 
-        //todo: добавить что-то типа типа ответа, если всё хорошо, например через enum. На созвоне обсуждали
-        PostServiceOuterClass.DeletePostResponse response = PostServiceOuterClass.DeletePostResponse.newBuilder()
-                .setResponse("Post " + request.getPostId() + " deleted successfully.")
+        DeletePostResponse response = DeletePostResponse.newBuilder()
+                .setResponse(SuccessResponse.OK)
                 .build();
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();
 
-
     }
 
-    public void createPost(PostServiceOuterClass.CreatePostRequest request, StreamObserver<PostServiceOuterClass.CreatePostResponse> responseObserver) {
-        Post post = postServiceMain.createPost(new CreatePostRequest(request.getAuthorId(), request.getHeader(), request.getText()));
+    public void createPost(CreatePostRequest request, StreamObserver<CreatePostResponse> responseObserver) {
+        Post post = postServiceMain.createPost(new CreatePostRequestDTO(request.getAuthorId(), request.getHeader(), request.getText()));
 
-        //todo: добавить что-то типа типа ответа, если всё хорошо, например через enum. На созвоне обсуждали
-        PostServiceOuterClass.CreatePostResponse response = PostServiceOuterClass.CreatePostResponse.newBuilder()
-                .setResponse("Successfully added new post: " + post)
+        CreatePostResponse response = CreatePostResponse.newBuilder()
+                .setResponse(SuccessResponse.CREATED)
                 .build();
 
         responseObserver.onNext(response);
@@ -101,3 +95,4 @@ public class GrpcToMainService {
 
     }
 }
+

@@ -1,11 +1,11 @@
-package kattsyn.dev.PostService.dtos;
+package kattsyn.dev.SocialNetwork.dtos.postservice;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class GetPostsRequest {
+public class GetPostsRequestDTO {
     private int page;
     private int count;
 }

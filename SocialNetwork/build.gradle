@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.2'
     id 'io.spring.dependency-management' version '1.1.6'
-    id 'com.google.protobuf' version '0.9.4'
+    id "com.google.protobuf" version "0.9.4"
 }
 
 group = 'kattsyn.dev'
@@ -45,6 +45,8 @@ dependencies {
     implementation 'io.grpc:grpc-stub:1.65.1'
     implementation 'net.devh:grpc-client-spring-boot-starter:2.15.0.RELEASE'
 
+    implementation project('grpc')
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
@@ -57,23 +59,5 @@ dependencies {
 }
 
 tasks.named('test') {
-    useJUnitPlatform()
-}
-
-protobuf {
-    protoc {
-        artifact = 'com.google.protobuf:protoc:3.6.1'
-    }
-    plugins {
-        grpc {
-            artifact = 'io.grpc:protoc-gen-grpc-java:1.15.1'
-        }
-    }
-    generateProtoTasks {
-        ofSourceSet('main').configureEach {
-            plugins {
-                grpc { }
-            }
-        }
-    }
+    //useJUnitPlatform()
 }

@@ -1,10 +1,12 @@
 package kattsyn.dev.PostService.services;
 
-import kattsyn.dev.PostService.dtos.CreatePostRequest;
-import kattsyn.dev.PostService.dtos.DeletePostRequest;
-import kattsyn.dev.PostService.dtos.EditPostRequest;
-import kattsyn.dev.PostService.dtos.GetPostsRequest;
+import kattsyn.dev.PostService.dtos.CreatePostRequestDTO;
+import kattsyn.dev.PostService.dtos.DeletePostRequestDTO;
+import kattsyn.dev.PostService.dtos.EditPostRequestDTO;
+import kattsyn.dev.PostService.dtos.GetPostsRequestDTO;
 import kattsyn.dev.PostService.entities.Post;
+import kattsyn.dev.PostService.exceptions.PostServiceErrorCodes;
+import kattsyn.dev.PostService.exceptions.PostServiceException;
 import kattsyn.dev.PostService.repositories.PostRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,23 +23,21 @@ public class PostServiceMain {
 
     public Optional<Post> getPostById(Long id) {
         Optional<Post> post = postRepository.findByPostId(id);
-        //PostServiceOuterClass.PostResponse response;
         if (post.isPresent()) {
             return post;
         } else {
-            //todo: поменять на кастомное исключение и добавить глобальный обработчик исключений
-            throw new RuntimeException("Пользователь не найден");
+            throw new PostServiceException(PostServiceErrorCodes.NOT_FOUND, "POST NOT FOUND");
         }
     }
 
-    public List<Post> getPosts(GetPostsRequest request) {
+    public List<Post> getPosts(GetPostsRequestDTO request) {
         Page<Post> page = postRepository.findAll(PageRequest.of(request.getPage(), request.getCount()));
 
         return page.getContent();
     }
 
 
-    public Post editPost(EditPostRequest request) {
+    public Post editPost(EditPostRequestDTO request) {
 
         Post postRequest = new Post(
                 request.getPostId(),
@@ -57,32 +57,28 @@ public class PostServiceMain {
                 }
                 return postRepository.save(postById.get());
             } else {
-                //todo: пробросить кастомное исключение с кодом 404
-                throw new RuntimeException("POST NOT FOUND");
+                throw new PostServiceException(PostServiceErrorCodes.NOT_FOUND, "POST NOT FOUND");
             }
         } else {
-            //todo: пробросить кастомное исключение с кодом 404
-            throw new RuntimeException("POST NOT FOUND");
+            throw new PostServiceException(PostServiceErrorCodes.NOT_FOUND, "POST NOT FOUND");
         }
     }
 
-    public void deletePost(DeletePostRequest request) {
+    public void deletePost(DeletePostRequestDTO request) {
         Optional<Post> post = postRepository.findByPostId(request.getPostId());
 
         if (post.isPresent()) {
             if (post.get().getAuthorId().equals(request.getAuthorId())) {
                 postRepository.deleteById(request.getPostId());
             } else {
-                //todo: пробросить кастомное исключение с кодом 403
-                throw new RuntimeException("FORBIDDEN");
+                throw new PostServiceException(PostServiceErrorCodes.NOT_FOUND, "POST NOT FOUND");
             }
         } else {
-            //todo: пробросить кастомное исключение с кодом 404
-            throw new RuntimeException("POST NOT FOUND");
+            throw new PostServiceException(PostServiceErrorCodes.NOT_FOUND, "POST NOT FOUND");
         }
     }
 
-    public Post createPost(CreatePostRequest request) {
+    public Post createPost(CreatePostRequestDTO request) {
         Post post = new Post(
                 request.getAuthorId(),
                 request.getHeader(),

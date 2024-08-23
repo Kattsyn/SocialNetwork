@@ -1,13 +1,13 @@
-package kattsyn.dev.SocialNetwork.dtos.postservice;
+package kattsyn.dev.PostService.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class PostDTO {
+public class EditPostRequestDTO {
     private Long postId;
-    private Long authorId;
+    private Long userId;
     private String header;
     private String text;
 }

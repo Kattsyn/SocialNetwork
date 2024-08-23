@@ -1,1 +1,3 @@
 rootProject.name = 'PostService'
+include ':grpc'
+project(':grpc').projectDir = file('../grpc')

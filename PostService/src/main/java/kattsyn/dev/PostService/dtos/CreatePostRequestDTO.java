@@ -5,7 +5,8 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class DeletePostRequest {
-    private Long postId;
-    private Long authorId;
+public class CreatePostRequestDTO {
+    Long authorId;
+    String header;
+    String text;
 }
