@@ -11,7 +11,7 @@ option java_multiple_files = true;
 message CreatePostRequest {
   int64 author_id = 1;
   string header = 2;
-  string text = 3;
+  string post_content = 3;
 }
 
 message GetPostByIdRequest {
@@ -27,7 +27,7 @@ message EditPostRequest {
   int64 postId = 1;
   int64 userId = 2;
   string header = 3;
-  string text = 4;
+  string post_content = 4;
 }
 
 message DeletePostRequest {
@@ -39,7 +39,7 @@ message PostResponse {
   int64 postId = 1;
   int64 authorId = 2;
   string header = 3;
-  string text = 4;
+  string post_content = 4;
 }
 
 message PostPageResponse {

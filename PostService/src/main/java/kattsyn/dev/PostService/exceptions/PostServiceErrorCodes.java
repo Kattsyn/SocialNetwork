@@ -7,9 +7,11 @@ public enum PostServiceErrorCodes {
     NOT_FOUND(404),
     FORBIDDEN(403);
 
-    private int code;
+    private final int code;
 
-    PostServiceErrorCodes(int code) {}
+    PostServiceErrorCodes(int code) {
+        this.code = code;
+    }
 
 }
 

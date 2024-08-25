@@ -1,6 +1,7 @@
 package kattsyn.dev.SocialNetwork.controllers;
 
 
+import com.google.api.Http;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,9 +25,7 @@ import java.util.Optional;
 public class UserController {
     private final UserService userService;
 
-    //todo: добавить удаление пользователя для авторизованного пользователя
-
-    @GetMapping
+    @GetMapping("")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "Получение информации о всех пользователях", description = "Возвращает список пользователей. Только для админов.")
     public List<User> users() {
@@ -47,17 +46,24 @@ public class UserController {
         return userService.findByUsername(principal.getName());
     }
 
-    @PatchMapping("/edit/{id}")
+    @PatchMapping("/{id}")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "Изменение информации пользователя", description = "Изменяет информацию о пользователе по ID. Только для админов.")
     public ResponseEntity<?> changeUserDataById(@PathVariable Long id, @RequestBody UserDto userDto) throws AppException {
         return new ResponseEntity<>(userService.changeUserData(userService.findById(id), userDto), HttpStatus.OK);
     }
 
-    @PatchMapping("/edit")
+    @PatchMapping("")
     @SecurityRequirement(name = "JWT")
     @Operation(summary = "Изменение информации пользователя", description = "Изменяет информацию авторизованного пользователя. Для всех авторизованных.")
     public ResponseEntity<?> changeCurrentUserData(@RequestBody UserDto userDto, Principal principal) throws AppException {
         return new ResponseEntity<>(userService.changeUserData(userService.findByUsername(principal.getName()), userDto), HttpStatus.OK);
+    }
+
+    @DeleteMapping("")
+    @SecurityRequirement(name = "JWT")
+    @Operation(summary = "Удаление авторизованного пользователя", description = "Удаляет пользователя из базы данных. Для авторизованных.")
+    public ResponseEntity<?> deleteUser(Principal principal) throws AppException {
+        return new ResponseEntity<>(userService.deleteUser(userService.findByUsername(principal.getName())), HttpStatus.OK);
     }
 }

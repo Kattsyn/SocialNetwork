@@ -28,7 +28,7 @@ public class GrpcToMainService {
                     .setPostId(post.get().getPostId())
                     .setAuthorId(post.get().getAuthorId())
                     .setHeader(post.get().getHeader())
-                    .setText(post.get().getText())
+                    .setPostContent(post.get().getPostContent())
                     .build();
             responseObserver.onNext(response);
             responseObserver.onCompleted();
@@ -43,7 +43,7 @@ public class GrpcToMainService {
                         .setPostId(e.getPostId())
                         .setAuthorId(e.getAuthorId())
                         .setHeader(e.getHeader())
-                        .setText(e.getText()).build())
+                        .setPostContent(e.getPostContent()).build())
                 .toList();
 
         PostPageResponse response = PostPageResponse.newBuilder()
@@ -56,11 +56,11 @@ public class GrpcToMainService {
 
     public void editPost(EditPostRequest request, StreamObserver<EditPostResponse> responseObserver) {
 
-        Post post = postServiceMain.editPost(new EditPostRequestDTO(
+        postServiceMain.editPost(new EditPostRequestDTO(
                 request.getPostId(),
                 request.getUserId(),
                 request.getHeader(),
-                request.getText()
+                request.getPostContent()
         ));
         EditPostResponse response = EditPostResponse.newBuilder()
                 .setResponse(SuccessResponse.OK)
@@ -84,7 +84,7 @@ public class GrpcToMainService {
     }
 
     public void createPost(CreatePostRequest request, StreamObserver<CreatePostResponse> responseObserver) {
-        Post post = postServiceMain.createPost(new CreatePostRequestDTO(request.getAuthorId(), request.getHeader(), request.getText()));
+        postServiceMain.createPost(new CreatePostRequestDTO(request.getAuthorId(), request.getHeader(), request.getPostContent()));
 
         CreatePostResponse response = CreatePostResponse.newBuilder()
                 .setResponse(SuccessResponse.CREATED)

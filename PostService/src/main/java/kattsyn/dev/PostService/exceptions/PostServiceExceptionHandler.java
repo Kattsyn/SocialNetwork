@@ -38,13 +38,6 @@ public class PostServiceExceptionHandler {
                 .setMessage(exception.getMessage())
                 .addDetails(Any.pack(exceptionResponse))
                 .build();
-/*
-        return PostServiceExceptionResponse.newBuilder()
-                .setErrorCode(PostServiceErrorCode.values()[exception.getErrorCode().ordinal()])
-                .setTimestamp(timestamp)
-                .build();
-
- */
         return StatusProto.toStatusRuntimeException(status);
     }
 }

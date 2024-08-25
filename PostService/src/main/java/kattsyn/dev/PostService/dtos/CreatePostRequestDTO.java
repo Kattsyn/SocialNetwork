@@ -8,5 +8,5 @@ import lombok.Data;
 public class CreatePostRequestDTO {
     Long authorId;
     String header;
-    String text;
+    String postContent;
 }

@@ -58,7 +58,9 @@ public class SecurityConfig {
                         .requestMatchers(
                                 apiPath + "/secured",
                                 apiPath + "/users/info",
-                                apiPath + "/users/edit").authenticated()
+                                apiPath + "/users/edit",
+                                apiPath + "/posts",
+                                apiPath + "/posts/{id}").authenticated()
                         .requestMatchers(
                                 apiPath + "/admin",
                                 apiPath + "/users/edit/{id}",

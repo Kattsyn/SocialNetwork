@@ -17,12 +17,12 @@ public class Post {
     Long authorId;
     @Column(name = "header")
     String header;
-    @Column(name = "text")
-    String text;
+    @Column(name = "post_content")
+    String postContent;
 
     public Post(Long authorId, String header, String text) {
         this.authorId = authorId;
         this.header = header;
-        this.text = text;
+        this.postContent = text;
     }
 }

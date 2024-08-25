@@ -117,5 +117,12 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    //todo: добавить удаление пользователя
+    public User deleteUser(Optional<User> user) throws AppException {
+        if (user.isPresent()) {
+            userRepository.delete(user.get());
+            return user.get();
+        } else {
+            throw new AppException(HttpStatus.NOT_FOUND, "Пользователь не найден");
+        }
+    }
 }

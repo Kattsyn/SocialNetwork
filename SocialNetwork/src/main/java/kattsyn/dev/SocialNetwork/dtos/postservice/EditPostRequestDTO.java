@@ -9,5 +9,5 @@ public class EditPostRequestDTO {
     private Long postId;
     private Long userId;
     private String header;
-    private String text;
+    private String postContent;
 }

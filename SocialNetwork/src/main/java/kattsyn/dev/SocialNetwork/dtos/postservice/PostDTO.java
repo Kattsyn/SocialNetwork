@@ -9,5 +9,5 @@ public class PostDTO {
     private Long postId;
     private Long authorId;
     private String header;
-    private String text;
+    private String postContent;
 }

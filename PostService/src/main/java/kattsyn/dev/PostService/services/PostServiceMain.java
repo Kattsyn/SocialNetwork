@@ -43,7 +43,7 @@ public class PostServiceMain {
                 request.getPostId(),
                 request.getUserId(),
                 request.getHeader(),
-                request.getText());
+                request.getPostContent());
 
         Optional<Post> postById = postRepository.findByPostId(postRequest.getPostId());
 
@@ -52,8 +52,8 @@ public class PostServiceMain {
                 if (!postRequest.getHeader().isEmpty()) {
                     postById.get().setHeader(postRequest.getHeader());
                 }
-                if (!postRequest.getText().isEmpty()) {
-                    postById.get().setText(postRequest.getText());
+                if (!postRequest.getPostContent().isEmpty()) {
+                    postById.get().setPostContent(postRequest.getPostContent());
                 }
                 return postRepository.save(postById.get());
             } else {
@@ -82,7 +82,7 @@ public class PostServiceMain {
         Post post = new Post(
                 request.getAuthorId(),
                 request.getHeader(),
-                request.getText());
+                request.getPostContent());
 
         return postRepository.save(post);
     }
