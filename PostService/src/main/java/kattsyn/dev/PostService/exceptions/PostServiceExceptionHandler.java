@@ -6,7 +6,6 @@ import com.google.rpc.Code;
 import com.google.rpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.protobuf.StatusProto;
-import io.grpc.reflection.v1alpha.ErrorResponse;
 import kattsyn.dev.grpc.PostServiceErrorCode;
 import kattsyn.dev.grpc.PostServiceExceptionResponse;
 import lombok.extern.slf4j.Slf4j;
