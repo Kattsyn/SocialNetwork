@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+package kattsyn.dev.grpc;
+
+option java_package = "kattsyn.dev.grpc";
+option java_outer_classname = "PostServiceProto";
+option java_multiple_files = true;
+
+message CreatePostRequest {
+  int64 author_id = 1;
+  string header = 2;
+  string post_content = 3;
+}
+
+message GetPostByIdRequest {
+  int64 postId = 1;
+}
+
+message GetPostsRequest {
+  int32 page = 1;
+  int32 count = 2;
+}
+
+message EditPostRequest {
+  int64 postId = 1;
+  int64 userId = 2;
+  string header = 3;
+  string post_content = 4;
+}
+
+message DeletePostRequest {
+  int64 postId = 1;
+  int64 authorId = 2;
+}
+
+message PostResponse {
+  int64 postId = 1;
+  int64 authorId = 2;
+  string header = 3;
+  string post_content = 4;
+}
+
+message PostPageResponse {
+  repeated PostResponse posts = 1;
+}
+
+message EditPostResponse {
+  SuccessResponse response = 1;
+}
+
+message DeletePostResponse {
+  SuccessResponse response = 1;
+}
+
+message CreatePostResponse {
+  SuccessResponse response = 1;
+}
+
+enum SuccessResponse {
+  OK = 0;
+  CREATED = 1;
+  NO_CONTENT = 2;
+}
+
+enum PostServiceErrorCode {
+  POST_NOT_FOUND = 0;
+  FORBIDDEN = 1;
+}
+
+message PostServiceExceptionResponse {
+  google.protobuf.Timestamp timestamp = 1;
+  PostServiceErrorCode error_code = 2;
+}
+
+service PostService {
+  rpc getPostById(GetPostByIdRequest) returns (stream PostResponse);
+  rpc getPosts(GetPostsRequest) returns (stream PostPageResponse);
+  rpc editPost(EditPostRequest) returns (stream EditPostResponse);
+  rpc deletePost(DeletePostRequest) returns (stream DeletePostResponse);
+  rpc createPost(CreatePostRequest) returns (stream CreatePostResponse);
+}

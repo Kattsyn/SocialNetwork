@@ -6,7 +6,7 @@ spring:
   application:
     name: SocialNetwork
   datasource:
-    url: jdbc:postgresql://localhost:5432/social_network_db
+    url: jdbc:postgresql://localhost:5432/user_service_db
     username: kattsyn
     password: katt
     driver-class-name: org.postgresql.Driver
@@ -22,3 +22,10 @@ jwt:
   lifetime: 30m
 api:
   path: api/v1
+grpc:
+  server:
+    address: localhost:9090
+  client:
+    post-service:
+      #address: static://post_service:9090
+      negotiation-type: plaintext

@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: PostService
+  datasource:
+    url: jdbc:postgresql://localhost:5433/post_service_db
+    username: kattsyn
+    password: katt
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+grpc:
+  server:
+    port: 9090

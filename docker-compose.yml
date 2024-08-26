@@ -1,27 +1,60 @@
 version: '3.1'
 
 services:
-  client-backend:
-    image: kattsyn/socialnet_back_java:latest
+  userservice:
+    container_name: user_service
+    build:
+      context: SocialNetwork/.
+      dockerfile: Dockerfile
     ports:
       - "8189:8189"
     depends_on:
-      - postgres
+      - postgres_user_service
+      - postservice
     environment:
-      - SERVER_PORT=8189
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/social_network_db
-      - SPRING_DATASOURCE_USER=kattsyn
-      - SPRING_DATASOURCE_PASSWORD=katt
-      - SPRING_JPA_HIBERNATE_DDL-AUTO=update
-      - JWT_SECRET=984hg493gh0439rthr0429uruj2309yh937gc763fe87t3f89723gf
-      - JWT_LIFETIME=30m
-      - API_PATH=api/v1
-  postgres:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_user_service:5432/user_service_db
+      SERVER_PORT: 8189
+      SPRING_DATASOURCE_USER: kattsyn
+      SPRING_DATASOURCE_PASSWORD: katt
+      SPRING_JPA_HIBERNATE_DDL-AUTO: update
+      JWT_SECRET: 984hg493gh0439rthr0429uruj2309yh937gc763fe87t3f89723gf
+      JWT_LIFETIME: 30m
+      API_PATH: api/v1
+      GRPC_SERVER_ADDRESS: postservice:9090
+      #GRPC_CLIENT_POST-SERVICE: "address: post_service:9090"
+  postgres_user_service:
     image: postgres:latest
-    container_name: social_network
+    container_name: user_service_db
     environment:
       POSTGRES_USER: kattsyn
       POSTGRES_PASSWORD: katt
-      POSTGRES_DB: social_network_db
+      POSTGRES_DB: user_service_db
     ports:
       - "5432:5432"
+     
+  postservice:
+    container_name: post_service
+    build:
+      context: PostService/.
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+    depends_on:
+      - postgres_post_service
+    environment:
+      GRPC_SERVER_PORT: 9090
+      #GRPC_SERVER_ADDRESS: post_service
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_post_service:5433/post_service_db
+      SPRING_DATASOURCE_USER: kattsyn
+      SPRING_DATASOURCE_PASSWORD: katt
+      SPRING_JPA_HIBERNATE_DDL-AUTO: create
+  postgres_post_service:
+    image: postgres:latest
+    container_name: post_service_db
+    environment:
+      POSTGRES_USER: kattsyn
+      POSTGRES_PASSWORD: katt
+      POSTGRES_DB: post_service_db
+      PGPORT: 5433
+    ports:
+      - "5433:5433"
