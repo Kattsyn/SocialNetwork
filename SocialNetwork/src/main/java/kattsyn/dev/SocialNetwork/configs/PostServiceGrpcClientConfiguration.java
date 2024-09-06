@@ -10,13 +10,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class PostServiceGrpcClientConfiguration {
 
-    /*
-    grpc:
-  #server:
-    #address: localhost:9090
-  client:
-    post-service:
-     */
     @Value("${grpc.client.post-service.address}")
     private String serverAddress;
 
