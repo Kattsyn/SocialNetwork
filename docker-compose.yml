@@ -20,7 +20,7 @@ services:
       JWT_SECRET: 984hg493gh0439rthr0429uruj2309yh937gc763fe87t3f89723gf
       JWT_LIFETIME: 30m
       API_PATH: api/v1
-      GRPC_SERVER_ADDRESS: postservice:9090
+      GRPC_CLIENT_POST-SERVICE_ADDRESS: postservice:9090
   postgres_user_service:
     image: postgres:latest
     container_name: user_service_db

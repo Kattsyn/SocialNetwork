@@ -23,9 +23,9 @@ jwt:
 api:
   path: api/v1
 grpc:
-  server:
-    address: localhost:9090
+  #server:
+    #address: localhost:9090
   client:
     post-service:
-      #address: static://post_service:9090
+      address: static://localhost:9090
       negotiation-type: plaintext
