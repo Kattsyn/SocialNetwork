@@ -1,6 +1,7 @@
 version: '3.1'
 
 services:
+  
   userservice:
     container_name: user_service
     build:
@@ -21,6 +22,7 @@ services:
       JWT_LIFETIME: 30m
       API_PATH: api/v1
       GRPC_CLIENT_POST-SERVICE_ADDRESS: postservice:9090
+  
   postgres_user_service:
     image: postgres:latest
     container_name: user_service_db
@@ -46,6 +48,7 @@ services:
       SPRING_DATASOURCE_USER: kattsyn
       SPRING_DATASOURCE_PASSWORD: katt
       SPRING_JPA_HIBERNATE_DDL-AUTO: create
+  
   postgres_post_service:
     image: postgres:latest
     container_name: post_service_db
@@ -56,3 +59,32 @@ services:
       PGPORT: 5433
     ports:
       - "5433:5433"
+  
+  statservice:
+    container_name: stat_service
+    build:
+      context: StatService/.
+      dockerfile: Dockerfile
+    ports:
+      - "9091:9091"
+    depends_on:
+      - postgres_stat_service
+      - postservice
+    environment:
+      GRPC_SERVER_PORT: 9091
+      GRPC_CLIENT_POST-SERVICE_ADDRESS: postservice:9090
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_stat_service:5434/stat_service_db
+      SPRING_DATASOURCE_USER: kattsyn
+      SPRING_DATASOURCE_PASSWORD: katt
+      SPRING_JPA_HIBERNATE_DDL-AUTO: create
+
+  postgres_stat_service:
+    image: postgres:latest
+    container_name: stat_service_db
+    environment:
+      POSTGRES_USER: kattsyn
+      POSTGRES_PASSWORD: katt
+      POSTGRES_DB: stat_service_db
+      PGPORT: 5434
+    ports:
+      - "5434:5434"
