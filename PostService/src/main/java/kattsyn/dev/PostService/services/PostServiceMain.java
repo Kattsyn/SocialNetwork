@@ -21,13 +21,18 @@ import java.util.Optional;
 public class PostServiceMain {
     private final PostRepository postRepository;
 
-    public Optional<Post> getPostById(Long id) {
+    public Post getPostById(Long id) {
         Optional<Post> post = postRepository.findByPostId(id);
         if (post.isPresent()) {
-            return post;
+            return post.get();
         } else {
             throw new PostServiceException(PostServiceErrorCodes.NOT_FOUND, "POST NOT FOUND");
         }
+    }
+
+    public Long getAuthorId(Long postId) {
+        Post post = getPostById(postId);
+        return post.getAuthorId();
     }
 
     public List<Post> getPosts(GetPostsRequestDTO request) {

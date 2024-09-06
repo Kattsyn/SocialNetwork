@@ -14,6 +14,10 @@ message CreatePostRequest {
   string post_content = 3;
 }
 
+message GetAuthorByPostIdRequest {
+  int64 postId = 1;
+}
+
 message GetPostByIdRequest {
   int64 postId = 1;
 }
@@ -40,6 +44,10 @@ message PostResponse {
   int64 authorId = 2;
   string header = 3;
   string post_content = 4;
+}
+
+message GetAuthorByPostIdResponse {
+  int64 authorId = 1;
 }
 
 message PostPageResponse {
@@ -80,4 +88,5 @@ service PostService {
   rpc editPost(EditPostRequest) returns (stream EditPostResponse);
   rpc deletePost(DeletePostRequest) returns (stream DeletePostResponse);
   rpc createPost(CreatePostRequest) returns (stream CreatePostResponse);
+  rpc getAuthorId(GetAuthorByPostIdRequest) returns (stream GetAuthorByPostIdResponse);
 }

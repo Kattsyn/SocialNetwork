@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 import kattsyn.dev.PostService.dtos.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @Component
 @AllArgsConstructor
@@ -21,18 +20,27 @@ public class GrpcToMainService {
 
     public void getPostById(GetPostByIdRequest request, StreamObserver<PostResponse> responseObserver) {
 
-        Optional<Post> post = postServiceMain.getPostById(request.getPostId());
+        Post post = postServiceMain.getPostById(request.getPostId());
 
-        if (post.isPresent()) {
-            PostResponse response = PostResponse.newBuilder()
-                    .setPostId(post.get().getPostId())
-                    .setAuthorId(post.get().getAuthorId())
-                    .setHeader(post.get().getHeader())
-                    .setPostContent(post.get().getPostContent())
-                    .build();
-            responseObserver.onNext(response);
-            responseObserver.onCompleted();
-        }
+        PostResponse response = PostResponse.newBuilder()
+                .setPostId(post.getPostId())
+                .setAuthorId(post.getAuthorId())
+                .setHeader(post.getHeader())
+                .setPostContent(post.getPostContent())
+                .build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+
+    }
+
+    public void getAuthorId(GetAuthorByPostIdRequest request, StreamObserver<GetAuthorByPostIdResponse> responseObserver) {
+        Long authorId = postServiceMain.getAuthorId(request.getPostId());
+
+        GetAuthorByPostIdResponse response = GetAuthorByPostIdResponse.newBuilder()
+                .setAuthorId(authorId)
+                .build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
     }
 
     public void getPosts(GetPostsRequest request, StreamObserver<PostPageResponse> responseObserver) {
@@ -72,7 +80,7 @@ public class GrpcToMainService {
 
     public void deletePost(DeletePostRequest request, StreamObserver<DeletePostResponse> responseObserver) {
 
-        postServiceMain.deletePost(new DeletePostRequestDTO(request.getPostId(), request.getAuthorId() ));
+        postServiceMain.deletePost(new DeletePostRequestDTO(request.getPostId(), request.getAuthorId()));
 
         DeletePostResponse response = DeletePostResponse.newBuilder()
                 .setResponse(SuccessResponse.OK)

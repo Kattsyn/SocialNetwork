@@ -18,6 +18,11 @@ public class PostServiceImpl extends PostServiceGrpc.PostServiceImplBase {
     }
 
     @Override
+    public void getAuthorId(GetAuthorByPostIdRequest request, StreamObserver<GetAuthorByPostIdResponse> responseObserver) {
+        mapper.getAuthorId(request, responseObserver);
+    }
+
+    @Override
     public void getPosts(GetPostsRequest request, StreamObserver<PostPageResponse> responseObserver) {
         mapper.getPosts(request, responseObserver);
     }
