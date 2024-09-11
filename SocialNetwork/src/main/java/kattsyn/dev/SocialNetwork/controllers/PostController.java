@@ -7,6 +7,7 @@ import kattsyn.dev.SocialNetwork.dtos.postservice.CreatePostRequestDTO;
 import kattsyn.dev.SocialNetwork.dtos.postservice.EditPostRequestDTO;
 import kattsyn.dev.SocialNetwork.exceptions.AppException;
 import kattsyn.dev.SocialNetwork.services.PostServiceGrpc;
+import kattsyn.dev.SocialNetwork.utils.KafkaSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,15 @@ import java.security.Principal;
 public class PostController {
 
     private final PostServiceGrpc postService;
+
+    private final KafkaSender kafkaSender;
+
+    @Operation(summary = "Дернуть отправку сообщения по кафке")
+    @SecurityRequirement(name = "JWT")
+    @PostMapping("/sendMessage")
+    public void sendMessage() {
+        //kafkaSender.sendEvent(new Event(Events.EVENT_LIKE, 1L, 1L), "event");
+    }
 
     @Operation(summary = "Получение записи по ID", description = "Возвращает информацию о записи.")
     @SecurityRequirement(name = "JWT")

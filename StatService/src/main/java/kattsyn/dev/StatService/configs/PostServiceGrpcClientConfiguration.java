@@ -21,8 +21,7 @@ public class PostServiceGrpcClientConfiguration {
     }
 
     @Bean
-    public PostServiceGrpc.PostServiceBlockingStub yourServiceBlockingStub(ManagedChannel managedChannel) {
+    public PostServiceGrpc.PostServiceBlockingStub postServiceBlockingStub(ManagedChannel managedChannel) {
         return PostServiceGrpc.newBlockingStub(managedChannel);
     }
-
 }

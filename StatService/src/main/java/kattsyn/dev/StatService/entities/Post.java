@@ -27,6 +27,6 @@ public class Post {
     }
 
     public void increaseViews(int amount) {
-        this.likes += amount;
+        this.views += amount;
     }
 }

@@ -1,6 +1,29 @@
 version: '3.1'
 
 services:
+
+  zookeeper:
+    image: zookeeper:latest
+    restart: always
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+  broker:
+    image: confluentinc/cp-kafka:latest
+    container_name: broker
+    depends_on:
+      - zookeeper
+    ports:
+      - "9099:9099"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:9099,PLAINTEXT_INTERNAL://broker:29099
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
   
   userservice:
     container_name: user_service
@@ -22,6 +45,7 @@ services:
       JWT_LIFETIME: 30m
       API_PATH: api/v1
       GRPC_CLIENT_POST-SERVICE_ADDRESS: postservice:9090
+      KAFKA_PRODUCER_BOOTSTRAP-SERVERS: 'broker:9099'
   
   postgres_user_service:
     image: postgres:latest
@@ -77,6 +101,7 @@ services:
       SPRING_DATASOURCE_USER: kattsyn
       SPRING_DATASOURCE_PASSWORD: katt
       SPRING_JPA_HIBERNATE_DDL-AUTO: create
+      KAFKA_CONSUMER_BOOTSTRAP-SERVERS: 'broker:9099'
 
   postgres_stat_service:
     image: postgres:latest

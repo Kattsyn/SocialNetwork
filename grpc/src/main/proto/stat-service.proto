@@ -7,7 +7,7 @@ option java_outer_classname = "StatServiceProto";
 option java_multiple_files = true;
 
 message PostsAuthorsByLikesViewsRequest {
-  int64 N = 1;
+  int32 N = 1;
 }
 
 message LikesViewsByIdRequest {

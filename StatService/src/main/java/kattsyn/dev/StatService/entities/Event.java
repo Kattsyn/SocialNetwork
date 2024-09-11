@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
+@Table(name = "events")
 @NoArgsConstructor
 public class Event {
     @Id
@@ -26,5 +27,20 @@ public class Event {
         this.userId = userId;
         this.postId = postId;
         this.timestamp = LocalDateTime.now();
+    }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "id=" + id +
+                ", type=" + type +
+                ", userId=" + userId +
+                ", postId=" + postId +
+                ", timestamp=" + timestamp +
+                '}';
+    }
+
+    public static Event modelToEntity(kattsyn.dev.models.kafka.Event event) {
+        return new Event(Events.values()[event.getType().ordinal()], event.getUserId(), event.getPostId());
     }
 }

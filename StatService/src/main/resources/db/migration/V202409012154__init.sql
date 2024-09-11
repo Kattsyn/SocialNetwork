@@ -13,7 +13,7 @@ CREATE TABLE posts
     foreign key (author_id) references authors (id)
 );
 CREATE TYPE event_type as ENUM ('EVENT_LIKE', 'EVENT_VIEW');
-CREATE TABLE event
+CREATE TABLE events
 (
     id BIGINT PRIMARY KEY,
     type event_type,
