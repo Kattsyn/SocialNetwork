@@ -3,13 +3,13 @@ package kattsyn.dev.SocialNetwork.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kattsyn.dev.SocialNetwork.exceptions.AppException;
 import kattsyn.dev.SocialNetwork.services.StatService;
+import kattsyn.dev.SocialNetwork.services.StatServiceGrpc;
 import kattsyn.dev.SocialNetwork.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -21,13 +21,7 @@ public class StatController {
 
     private final StatService statService;
     private final UserService userService;
-
-    @Operation(summary = "Дернуть отправку сообщения по кафке")
-    @SecurityRequirement(name = "JWT")
-    @PostMapping("/sendMessage")
-    public void sendMessage() {
-        statService.sendMessage();
-    }
+    private final StatServiceGrpc statServiceGrpc;
 
     @Operation(summary = "Поставить лайк посту", description = "Для авторизованных пользователей")
     @SecurityRequirement(name = "JWT")
@@ -44,13 +38,46 @@ public class StatController {
         Long userID = userService.findByUsername(principal.getName()).get().getId();
         statService.viewPost(postId, userID);
     }
-    /*
-    @Operation(summary = "Получить количество лайков у поста", description = "Для авторизованных пользователей")
+
+    @Operation(summary = "Получить N лучших постов по лайкам", description = "Для авторизованных пользователей")
     @SecurityRequirement(name = "JWT")
-    @PostMapping("/likes/{postId}")
-    public void getLikesByPostId(@PathVariable Long postId) {
-        statService.viewPost(postId, userID);
+    @GetMapping("/postsByLikes/{N}")
+    public ResponseEntity<?> getNPostsByLikes(@PathVariable int N) throws AppException {
+        return ResponseEntity.ok(statServiceGrpc.getNPostsByLikes(N));
+    }
+    @Operation(summary = "Получить N лучших постов по просмотрам", description = "Для авторизованных пользователей")
+    @SecurityRequirement(name = "JWT")
+    @GetMapping("/postsByViews/{N}")
+    public ResponseEntity<?> getNPostsByViews(@PathVariable int N) throws AppException {
+        return ResponseEntity.ok(statServiceGrpc.getNPostsByViews(N));
     }
 
-     */
+    @Operation(summary = "Получить N лучших авторов по лайкам", description = "Для авторизованных пользователей")
+    @SecurityRequirement(name = "JWT")
+    @GetMapping("/authorsByLikes/{N}")
+    public ResponseEntity<?> getNAuthorsByLikes(@PathVariable int N) throws AppException {
+        return ResponseEntity.ok(statServiceGrpc.getNAuthorsByLikes(N));
+    }
+
+    @Operation(summary = "Получить N лучших авторов по просмотрам", description = "Для авторизованных пользователей")
+    @SecurityRequirement(name = "JWT")
+    @GetMapping("/authorsByViews/{N}")
+    public ResponseEntity<?> getNAuthorsByViews(@PathVariable int N) throws AppException {
+        return ResponseEntity.ok(statServiceGrpc.getNAuthorsByViews(N));
+    }
+
+
+    @Operation(summary = "Получить кол-во лайков поста по его ID", description = "Для авторизованных пользователей")
+    @SecurityRequirement(name = "JWT")
+    @GetMapping("/postLikesById/{postId}")
+    public ResponseEntity<Integer> getLikesById(@PathVariable Long postId) throws AppException {
+        return ResponseEntity.ok(statServiceGrpc.getLikesById(postId));
+    }
+
+    @Operation(summary = "Получить кол-во просмотров поста по его ID", description = "Для авторизованных пользователей")
+    @SecurityRequirement(name = "JWT")
+    @GetMapping("/postViewsById/{postId}")
+    public ResponseEntity<Integer> getViewsById(Long postId) throws AppException {
+        return ResponseEntity.ok(statServiceGrpc.getViewsById(postId));
+    }
 }

@@ -18,6 +18,26 @@ public class GrpcToMainService {
 
     private final PostServiceMain postServiceMain;
 
+    public void getPostsByIdList(GetPostsByIdListRequest request, StreamObserver<GetPostsByIdListResponse> responseObserver) {
+        List<Long> idList = request.getIdList();
+        List<Post> list = postServiceMain.getPostListByIdList(idList);
+
+        List<PostResponse> listResponses = list.stream().map(e -> PostResponse
+                        .newBuilder()
+                        .setPostId(e.getPostId())
+                        .setAuthorId(e.getAuthorId())
+                        .setHeader(e.getHeader())
+                        .setPostContent(e.getPostContent()).build())
+                .toList();
+
+        GetPostsByIdListResponse response = GetPostsByIdListResponse.newBuilder()
+                .addAllPost(listResponses)
+                .build();
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
     public void getPostById(GetPostByIdRequest request, StreamObserver<PostResponse> responseObserver) {
 
         Post post = postServiceMain.getPostById(request.getPostId());

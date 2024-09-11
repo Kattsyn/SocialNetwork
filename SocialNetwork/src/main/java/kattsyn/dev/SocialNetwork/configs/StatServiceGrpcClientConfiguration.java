@@ -2,28 +2,27 @@ package kattsyn.dev.SocialNetwork.configs;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import kattsyn.dev.grpc.PostServiceGrpc;
+import kattsyn.dev.grpc.StatServiceGrpc;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class PostServiceGrpcClientConfiguration {
+public class StatServiceGrpcClientConfiguration {
 
-    @Value("${grpc.client.post-service.address}")
+    @Value("${grpc.client.stat-service.address}")
     private String serverAddress;
 
     @Bean
-    public ManagedChannel postServiceManagedChannel() {
+    public ManagedChannel statServiceManagedChannel() {
         return ManagedChannelBuilder.forTarget(serverAddress)
                 .usePlaintext()
                 .build();
     }
 
     @Bean
-    public PostServiceGrpc.PostServiceBlockingStub postServiceBlockingStub(@Qualifier("postServiceManagedChannel")ManagedChannel managedChannel) {
-        return PostServiceGrpc.newBlockingStub(managedChannel);
+    public StatServiceGrpc.StatServiceBlockingStub statServiceBlockingStub(@Qualifier("statServiceManagedChannel") ManagedChannel managedChannel) {
+        return StatServiceGrpc.newBlockingStub(managedChannel);
     }
-
 }

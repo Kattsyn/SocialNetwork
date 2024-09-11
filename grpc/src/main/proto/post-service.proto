@@ -27,6 +27,14 @@ message GetPostsRequest {
   int32 count = 2;
 }
 
+message GetPostsByIdListRequest {
+  repeated int64 id = 1;
+}
+
+message GetPostsByIdListResponse {
+  repeated PostResponse post = 1;
+}
+
 message EditPostRequest {
   int64 postId = 1;
   int64 userId = 2;
@@ -49,6 +57,7 @@ message PostResponse {
 message GetAuthorByPostIdResponse {
   int64 authorId = 1;
 }
+
 
 message PostPageResponse {
   repeated PostResponse posts = 1;
@@ -89,4 +98,5 @@ service PostService {
   rpc deletePost(DeletePostRequest) returns (stream DeletePostResponse);
   rpc createPost(CreatePostRequest) returns (stream CreatePostResponse);
   rpc getAuthorId(GetAuthorByPostIdRequest) returns (stream GetAuthorByPostIdResponse);
+  rpc getPostsByIdList(GetPostsByIdListRequest) returns (stream GetPostsByIdListResponse);
 }

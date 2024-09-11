@@ -3,12 +3,12 @@ package kattsyn.dev.SocialNetwork.services;
 import com.google.rpc.Status;
 import io.grpc.protobuf.StatusProto;
 import kattsyn.dev.SocialNetwork.dtos.postservice.CreatePostRequestDTO;
-import kattsyn.dev.SocialNetwork.dtos.postservice.DeletePostRequestDTO;
 import kattsyn.dev.SocialNetwork.dtos.postservice.EditPostRequestDTO;
 import kattsyn.dev.SocialNetwork.dtos.postservice.PostDTO;
 import kattsyn.dev.SocialNetwork.exceptions.AppException;
 import kattsyn.dev.grpc.*;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -17,10 +17,26 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class PostServiceGrpc {
 
     private final kattsyn.dev.grpc.PostServiceGrpc.PostServiceBlockingStub postServiceStub;
     private final UserService userService;
+
+    public List<PostDTO> getPostsByIdList(List<Long> idList) {
+        GetPostsByIdListRequest request = GetPostsByIdListRequest.newBuilder()
+                .addAllId(idList).build();
+        try {
+            GetPostsByIdListResponse response = postServiceStub.getPostsByIdList(request).next();
+            return response.getPostList()
+                    .stream()
+                    .map(e -> new PostDTO(e.getPostId(), e.getAuthorId(), e.getHeader(), e.getPostContent()))
+                    .toList();
+        } catch (Exception e) {
+            log.error("Caught exception in getPostsByIdList");
+            throw new RuntimeException(e.getMessage());
+        }
+    }
 
     public String getPostById(Long id) throws AppException {
         GetPostByIdRequest request = GetPostByIdRequest.newBuilder()
@@ -42,11 +58,10 @@ public class PostServiceGrpc {
                 .build();
         try {
             PostPageResponse response = postServiceStub.getPosts(request).next();
-            List<PostDTO> list = response.getPostsList()
+            return response.getPostsList()
                     .stream()
                     .map(e -> new PostDTO(e.getPostId(), e.getAuthorId(), e.getHeader(), e.getPostContent()))
                     .toList();
-            return list;
         } catch (Exception e) {
             Status status = StatusProto.fromThrowable(e);
             throw new AppException(HttpStatus.NOT_FOUND, status.getMessage());
