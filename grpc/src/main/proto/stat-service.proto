@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package kattsyn.dev.grpc;
+
+option java_package = "kattsyn.dev.grpc";
+option java_outer_classname = "StatServiceProto";
+option java_multiple_files = true;
+
+message PostsAuthorsByLikesViewsRequest {
+  int32 N = 1;
+}
+
+message LikesViewsByIdRequest {
+  int64 post_id = 1;
+}
+
+message PostsResponse {
+  repeated int64 post_id = 1;
+}
+
+message AuthorsResponse {
+  repeated int64 author_id = 1;
+}
+
+message LikesByIdResponse {
+  int32 likes = 1;
+}
+
+message ViewsByIdResponse {
+  int32 views = 1;
+}
+
+service StatService {
+  rpc getNPostsByLikes(PostsAuthorsByLikesViewsRequest) returns (stream PostsResponse);
+  rpc getNPostsByViews(PostsAuthorsByLikesViewsRequest) returns (stream PostsResponse);
+  rpc getNAuthorsByLikes(PostsAuthorsByLikesViewsRequest) returns (stream AuthorsResponse);
+  rpc getNAuthorsByViews(PostsAuthorsByLikesViewsRequest) returns (stream AuthorsResponse);
+  rpc getLikesById(LikesViewsByIdRequest) returns (stream LikesByIdResponse);
+  rpc getViewsById(LikesViewsByIdRequest) returns (stream ViewsByIdResponse);
+}

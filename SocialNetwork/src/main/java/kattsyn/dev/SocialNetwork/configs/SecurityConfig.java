@@ -51,6 +51,20 @@ public class SecurityConfig {
             Authorization: Bearer_<token>
         типо такого
          */
+        /*
+        .requestMatchers(
+                                "${api.path}/secured",
+                                "${api.path}/users/info",
+                                "${api.path}/users/edit",
+                                "${api.path}/posts",
+                                "${api.path}/posts/{id}",
+                                "${api.path}/stats").authenticated()
+                        .requestMatchers(
+                                "${api.path}/admin",
+                                "${api.path}/users/edit/{id}",
+                                "${api.path}/users",
+                                "${api.path}/users/{id}").hasRole("ADMIN")
+         */
         http
                 .csrf(CsrfConfigurer::disable)
                 .cors(CorsConfigurer::disable)
@@ -60,7 +74,8 @@ public class SecurityConfig {
                                 apiPath + "/users/info",
                                 apiPath + "/users/edit",
                                 apiPath + "/posts",
-                                apiPath + "/posts/{id}").authenticated()
+                                apiPath + "/posts/{id}",
+                                apiPath + "/stats").authenticated()
                         .requestMatchers(
                                 apiPath + "/admin",
                                 apiPath + "/users/edit/{id}",

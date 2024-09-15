@@ -6,6 +6,7 @@ import kattsyn.dev.SocialNetwork.entities.User;
 import kattsyn.dev.SocialNetwork.exceptions.AppException;
 import kattsyn.dev.SocialNetwork.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final RoleService roleService;
@@ -61,6 +63,19 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+
+    public List<User> getUsersByIdList(List<Long> idList) {
+        return idList.stream()
+                .map(e -> {
+                    Optional<User> user = userRepository.findById(e);
+                    if (user.isPresent()) {
+                        return user.get();
+                    } else {
+                        log.info("Пользователь с id = {} не был найден.", e);
+                        return null;
+                    }
+                }).toList();
+    }
 
     @Override
     @Transactional

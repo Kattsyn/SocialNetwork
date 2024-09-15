@@ -1,0 +1,3 @@
+rootProject.name = 'StatService'
+include ':grpc'
+project(':grpc').projectDir = file('../grpc')

@@ -6,7 +6,7 @@ spring:
   application:
     name: SocialNetwork
   datasource:
-    url: jdbc:postgresql://localhost:5432/user_service_db
+    url: jdbc:postgresql://postgres_user_service:5432/user_service_db
     username: kattsyn
     password: katt
     driver-class-name: org.postgresql.Driver
@@ -17,15 +17,25 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    producer:
+      client-id: "user-service"
+      bootstrap-servers: "broker:9099"
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: "kattsyn.dev.SocialNetwork.dtos.statservice, java.util, java.lang"
 jwt:
   secret: 984hg493gh0439rthr0429uruj2309yh937gc763fe87t3f89723gf
   lifetime: 30m
 api:
   path: api/v1
 grpc:
-  server:
-    address: localhost:9090
   client:
     post-service:
-      #address: static://post_service:9090
+      address: static://localhost:9090
+      negotiation-type: plaintext
+    stat-service:
+      address: static://localhost:9091
       negotiation-type: plaintext

@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: StatService
+  datasource:
+    url: jdbc:postgresql://localhost:5434/stat_service_db
+    username: kattsyn
+    password: katt
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    consumer:
+      bootstrap-servers: ${KAFKA_CONSUMER_BOOTSTRAP-SERVERS}
+      client-id: "stat-service"
+      group-id: "event"
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: "kattsyn.dev.StatService.entities, java.util, java.lang"
+grpc:
+  server:
+    port: 9091
+  client:
+    post-service:
+      address: static://localhost:9090
+      negotiation-type: plaintext

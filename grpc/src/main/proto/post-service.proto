@@ -14,6 +14,10 @@ message CreatePostRequest {
   string post_content = 3;
 }
 
+message GetAuthorByPostIdRequest {
+  int64 postId = 1;
+}
+
 message GetPostByIdRequest {
   int64 postId = 1;
 }
@@ -21,6 +25,14 @@ message GetPostByIdRequest {
 message GetPostsRequest {
   int32 page = 1;
   int32 count = 2;
+}
+
+message GetPostsByIdListRequest {
+  repeated int64 id = 1;
+}
+
+message GetPostsByIdListResponse {
+  repeated PostResponse post = 1;
 }
 
 message EditPostRequest {
@@ -41,6 +53,11 @@ message PostResponse {
   string header = 3;
   string post_content = 4;
 }
+
+message GetAuthorByPostIdResponse {
+  int64 authorId = 1;
+}
+
 
 message PostPageResponse {
   repeated PostResponse posts = 1;
@@ -80,4 +97,6 @@ service PostService {
   rpc editPost(EditPostRequest) returns (stream EditPostResponse);
   rpc deletePost(DeletePostRequest) returns (stream DeletePostResponse);
   rpc createPost(CreatePostRequest) returns (stream CreatePostResponse);
+  rpc getAuthorId(GetAuthorByPostIdRequest) returns (stream GetAuthorByPostIdResponse);
+  rpc getPostsByIdList(GetPostsByIdListRequest) returns (stream GetPostsByIdListResponse);
 }
