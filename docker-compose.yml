@@ -35,6 +35,7 @@ services:
     depends_on:
       - postgres_user_service
       - postservice
+      - broker
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_user_service:5432/user_service_db
       SERVER_PORT: 8189
@@ -67,12 +68,14 @@ services:
       - "9090:9090"
     depends_on:
       - postgres_post_service
+      - broker
     environment:
       GRPC_SERVER_PORT: 9090
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_post_service:5433/post_service_db
       SPRING_DATASOURCE_USER: kattsyn
       SPRING_DATASOURCE_PASSWORD: katt
       SPRING_JPA_HIBERNATE_DDL-AUTO: create
+      KAFKA_PRODUCER_BOOTSTRAP-SERVERS: 'broker:9099'
   
   postgres_post_service:
     image: postgres:latest

@@ -1,4 +1,4 @@
-package kattsyn.dev.StatService.configs;
+package kattsyn.dev.StatService.kafka;
 
 import kattsyn.dev.models.kafka.Event;
 import kattsyn.dev.StatService.services.PostService;

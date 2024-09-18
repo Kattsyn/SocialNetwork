@@ -3,6 +3,7 @@ package kattsyn.dev.PostService.mappers;
 
 import io.grpc.stub.StreamObserver;
 import kattsyn.dev.PostService.entities.Post;
+import kattsyn.dev.PostService.kafka.KafkaSender;
 import kattsyn.dev.PostService.services.PostServiceMain;
 import kattsyn.dev.grpc.*;
 import kattsyn.dev.grpc.GetPostsRequest;
@@ -17,6 +18,7 @@ import java.util.List;
 public class GrpcToMainService {
 
     private final PostServiceMain postServiceMain;
+    private final KafkaSender kafkaSender;
 
     public void getPostsByIdList(GetPostsByIdListRequest request, StreamObserver<GetPostsByIdListResponse> responseObserver) {
         List<Long> idList = request.getIdList();
@@ -112,8 +114,15 @@ public class GrpcToMainService {
     }
 
     public void createPost(CreatePostRequest request, StreamObserver<CreatePostResponse> responseObserver) {
-        postServiceMain.createPost(new CreatePostRequestDTO(request.getAuthorId(), request.getHeader(), request.getPostContent()));
+        Post post = postServiceMain.createPost(new CreatePostRequestDTO(request.getAuthorId(), request.getHeader(), request.getPostContent()));
 
+        kafkaSender.sendPost(
+                new kattsyn.dev.models.kafka.Post(
+                        post.getPostId(),
+                        post.getAuthorId(),
+                        post.getHeader(),
+                        post.getPostContent()
+                ), "post");
         CreatePostResponse response = CreatePostResponse.newBuilder()
                 .setResponse(SuccessResponse.CREATED)
                 .build();
