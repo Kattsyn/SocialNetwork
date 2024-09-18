@@ -7,7 +7,7 @@ import kattsyn.dev.SocialNetwork.dtos.postservice.CreatePostRequestDTO;
 import kattsyn.dev.SocialNetwork.dtos.postservice.EditPostRequestDTO;
 import kattsyn.dev.SocialNetwork.exceptions.AppException;
 import kattsyn.dev.SocialNetwork.services.PostServiceGrpc;
-import kattsyn.dev.SocialNetwork.utils.KafkaSender;
+import kattsyn.dev.SocialNetwork.kafka.KafkaSender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

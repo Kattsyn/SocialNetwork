@@ -1,4 +1,4 @@
-package kattsyn.dev.SocialNetwork.configs;
+package kattsyn.dev.SocialNetwork.kafka;
 
 
 import org.apache.kafka.clients.producer.ProducerConfig;
