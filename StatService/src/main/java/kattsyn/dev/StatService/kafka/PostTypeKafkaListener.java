@@ -1,6 +1,7 @@
 package kattsyn.dev.StatService.kafka;
 
 
+import kattsyn.dev.StatService.services.PostService;
 import kattsyn.dev.models.kafka.Post;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Component;
 @KafkaListener(id = "postListener", topics = "post", containerFactory = "postKafkaListenerContainerFactory")
 public class PostTypeKafkaListener {
 
+    private final PostService postService;
+
 
     @KafkaHandler
     public void listenGroupEvent(String data) {
@@ -24,6 +27,6 @@ public class PostTypeKafkaListener {
     @KafkaHandler
     void listenGroupEvent(Post post) {
         log.info("Received event [{}] in groupPost", post);
-        //todo: добавить добавление поста в таблицу
+        postService.createPost(post);
     }
 }
