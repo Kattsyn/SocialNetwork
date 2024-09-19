@@ -11,16 +11,19 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "likes")
+@Table(
+        name = "likes",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"post_id", "user_id"})}
+)
 public class Like {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
     @Column(name = "post_id")
-    Long postId;
+    private Long postId;
     @Column(name = "user_id")
-    Long userId;
+    private Long userId;
 
     public Like(Long postId, Long userId) {
         this.postId = postId;
