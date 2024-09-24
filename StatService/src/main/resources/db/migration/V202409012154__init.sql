@@ -22,3 +22,12 @@ CREATE TABLE events
     user_id BIGINT,
     foreign key (post_id) references posts (id)
 );
+CREATE TABLE likes
+(
+    id        BIGINT PRIMARY KEY,
+    user_id   BIGINT,
+    post_id   BIGINT,
+    timestamp TIMESTAMP WITHOUT TIME ZONE,
+    FOREIGN KEY (post_id) REFERENCES posts (id),
+    UNIQUE (user_id, post_id)
+);

@@ -2,6 +2,7 @@ package kattsyn.dev.StatService.services;
 
 import kattsyn.dev.StatService.entities.Author;
 import kattsyn.dev.StatService.entities.Event;
+import kattsyn.dev.StatService.entities.Like;
 import kattsyn.dev.StatService.entities.Post;
 import kattsyn.dev.StatService.enums.Events;
 import kattsyn.dev.StatService.repositories.PostRepository;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,32 +28,33 @@ public class PostService {
     private final PostServiceGrpc.PostServiceBlockingStub postServiceBlockingStub;
     private final AuthorService authorService;
     private final EventService eventService;
+    private final LikeService likeService;
 
+    @Transactional
     public void processEvent(Event event) {
-        if (addEventAndCheckIfLikedAlready(event)) {
-            return;
-        }
-        updatePost(event);
-    }
 
-    private boolean addEventAndCheckIfLikedAlready(Event event) {
-        log.info("Зашел в метод hasUserLikedPostAlready");
         if (event.getType().equals(Events.EVENT_LIKE)) {
-            Optional<Event> eventOptional = eventService.findByPostIdAndUserIdAndType(event.getPostId(), event.getUserId(), event.getType());
-            if (eventOptional.isPresent()) {
-                log.info("Пользователь с id: {} лайк уже ставил.", event.getUserId());
-                return true;
+            if (checkIfLikedAlready(event)) {
+                return;
             }
         }
         eventService.save(event);
+        updatePost(event);
+    }
+
+    private boolean checkIfLikedAlready(Event event) {
+
+        Optional<Like> like = likeService.findByPostIdAndUserId(event.getPostId(), event.getUserId());
+
+        if (like.isPresent()) {
+            log.info("Пользователь с id: {} лайк уже ставил.", event.getUserId());
+            return true;
+        }
         return false;
     }
 
-    private void updatePost(Event event) {
-        log.info("Зашел в метод updatePost");
+    protected void updatePost(Event event) {
         Optional<Post> post = postRepository.findById(event.getPostId());
-
-        log.info("Event: {}", event);
 
         if (post.isPresent()) {
             Author author = post.get().getAuthor();
@@ -59,6 +62,7 @@ public class PostService {
                 case EVENT_LIKE:
                     post.get().increaseLikes(1);
                     author.increaseLikes(1);
+                    likeService.save(new Like(post.get().getId(), event.getUserId()));
                     break;
 
                 case EVENT_VIEW:
@@ -69,6 +73,8 @@ public class PostService {
             postRepository.save(post.get());
             authorService.save(author);
         } else {
+            //Сработает в случае, если при создании поста из PostService не дошла информация об этом
+            //тогда StatService сам пойдет спрашивать есть ли такой пост
             createPost(event);
             updatePost(event);
         }
@@ -80,6 +86,14 @@ public class PostService {
         ).next().getAuthorId();
         Author author = new Author(authorId);
         Post newPost = new Post(event.getPostId(), 0, 0, author);
+        authorService.save(author);
+        postRepository.save(newPost);
+    }
+
+    public void createPost(kattsyn.dev.models.kafka.Post post) {
+        log.info("Creating post: {}", post);
+        Author author = new Author(post.getAuthorId());
+        Post newPost = new Post(post.getPostId(), 0, 0, author);
         authorService.save(author);
         postRepository.save(newPost);
     }

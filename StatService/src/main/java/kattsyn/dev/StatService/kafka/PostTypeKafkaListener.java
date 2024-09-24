@@ -1,7 +1,8 @@
-package kattsyn.dev.StatService.configs;
+package kattsyn.dev.StatService.kafka;
 
-import kattsyn.dev.models.kafka.Event;
+
 import kattsyn.dev.StatService.services.PostService;
+import kattsyn.dev.models.kafka.Post;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaHandler;
@@ -11,10 +12,11 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-@KafkaListener(id = "eventListener", topics = "event", containerFactory = "eventKafkaListenerContainerFactory")
-public class EventTypeKafkaListener {
+@KafkaListener(id = "postListener", topics = "post", containerFactory = "postKafkaListenerContainerFactory")
+public class PostTypeKafkaListener {
 
     private final PostService postService;
+
 
     @KafkaHandler
     public void listenGroupEvent(String data) {
@@ -23,9 +25,8 @@ public class EventTypeKafkaListener {
 
 
     @KafkaHandler
-    void listenGroupEvent(Event event) {
-        log.info("Received event [{}] in groupEvent", event);
-        System.out.println(event);
-        postService.processEvent(kattsyn.dev.StatService.entities.Event.modelToEntity(event));
+    void listenGroupEvent(Post post) {
+        log.info("Received event [{}] in groupPost", post);
+        postService.createPost(post);
     }
 }

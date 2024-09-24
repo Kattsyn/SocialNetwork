@@ -1,6 +1,7 @@
-package kattsyn.dev.StatService.configs;
+package kattsyn.dev.StatService.kafka;
 
 import kattsyn.dev.models.kafka.Event;
+import kattsyn.dev.models.kafka.Post;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,6 +48,31 @@ public class KafkaConsumerConfig {
         ConcurrentKafkaListenerContainerFactory<String, Event> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(eventConsumerFactory());
+        return factory;
+    }
+
+    @Bean
+    public ConsumerFactory<String, Post> postConsumerFactory() {
+        Map<String, Object> props = new HashMap<>();
+        props.put(
+                ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
+                bootstrapAddress);
+        props.put(
+                ConsumerConfig.GROUP_ID_CONFIG,
+                "post");
+        return new DefaultKafkaConsumerFactory<>(
+                props,
+                new StringDeserializer(),
+                new ErrorHandlingDeserializer<>(new JsonDeserializer<>(Post.class))
+        );
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, Post>
+    postKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, Post> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(postConsumerFactory());
         return factory;
     }
 }

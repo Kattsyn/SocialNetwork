@@ -32,6 +32,7 @@ dependencies {
 	implementation 'org.flywaydb:flyway-core'
 	implementation 'org.flywaydb:flyway-database-postgresql'
 
+	implementation 'org.springframework.kafka:spring-kafka:3.2.3'
 
 	implementation 'io.grpc:grpc-netty-shaded:1.65.1'
 	implementation 'io.grpc:grpc-protobuf:1.65.1'

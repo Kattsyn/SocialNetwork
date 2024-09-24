@@ -1,4 +1,4 @@
-package kattsyn.dev.SocialNetwork.utils;
+package kattsyn.dev.SocialNetwork.kafka;
 
 import kattsyn.dev.models.kafka.Event;
 import lombok.AllArgsConstructor;

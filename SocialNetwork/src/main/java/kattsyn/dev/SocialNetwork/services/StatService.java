@@ -2,7 +2,7 @@ package kattsyn.dev.SocialNetwork.services;
 
 import kattsyn.dev.models.kafka.Event;
 import kattsyn.dev.models.kafka.Events;
-import kattsyn.dev.SocialNetwork.utils.KafkaSender;
+import kattsyn.dev.SocialNetwork.kafka.KafkaSender;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
