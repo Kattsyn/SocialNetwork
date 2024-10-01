@@ -19,7 +19,6 @@ public class RoleService {
     @Transactional
     public Role getUserRole() {
         return roleRepository.findByName(ROLE_USER.name()).get();
-
     }
     public Role getAdminRole() {
         return roleRepository.findByName(ROLE_ADMIN.name()).get();
