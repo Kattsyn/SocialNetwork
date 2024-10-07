@@ -55,8 +55,8 @@ public class PostController {
 
     @Operation(summary = "Редактирование записи", description = "Возвращает информацию о записи. Авторизованным пользователям, нужно быть автором поста, либо админом.")
     @SecurityRequirement(name = "JWT")
-    @PatchMapping("")
-    public ResponseEntity<?> editPostById(@RequestBody EditPostRequestDTO requestDTO, Principal principal) throws AppException {
-        return ResponseEntity.ok(postService.editPost(requestDTO, principal));
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> editPostById(@PathVariable Long id, @RequestBody EditPostRequestDTO requestDTO, Principal principal) throws AppException {
+        return ResponseEntity.ok(postService.editPost(id, requestDTO, principal));
     }
 }

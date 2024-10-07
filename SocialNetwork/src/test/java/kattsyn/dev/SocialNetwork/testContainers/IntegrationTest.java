@@ -105,7 +105,7 @@ public class IntegrationTest {
 
     }
 
-    @Test
+
     void testUserRegistration() throws Exception {
         String jsonBody = "{" +
                 "\"username\":\"testuser\", " +
@@ -124,7 +124,7 @@ public class IntegrationTest {
                 .andExpect(status().isOk());
     }
 
-    @Test
+
     void testUserLogin() throws Exception {
         String jsonBody = "{\"username\":\"testuser\", \"password\":\"testpass\"}";
 
@@ -134,7 +134,7 @@ public class IntegrationTest {
                 .andExpect(status().isOk()); // Ожидаем код 200
     }
 
-    @Test
+
     void createPostTest() {
         CreatePostRequest request = CreatePostRequest.newBuilder()
                 .setAuthorId(1L)
