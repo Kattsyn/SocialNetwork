@@ -1,0 +1,111 @@
+version: '3.1'
+
+services:
+
+  zookeeper:
+    image: zookeeper:latest
+    restart: always
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+  broker:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - "9099:9099"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:9099,PLAINTEXT_INTERNAL://broker:29099
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+
+  userservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8189:8189"
+    depends_on:
+      - postgres_user_service
+      - postservice
+      - broker
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_user_service:5432/user_service_db
+      SERVER_PORT: 8189
+      SPRING_DATASOURCE_USER: kattsyn
+      SPRING_DATASOURCE_PASSWORD: katt
+      SPRING_JPA_HIBERNATE_DDL-AUTO: update
+      JWT_SECRET: 984hg493gh0439rthr0429uruj2309yh937gc763fe87t3f89723gf
+      JWT_LIFETIME: 30m
+      API_PATH: api/v1
+      GRPC_CLIENT_POST-SERVICE_ADDRESS: postservice:9090
+      GRPC_CLIENT_STAT-SERVICE_ADDRESS: statservice:9091
+      KAFKA_PRODUCER_BOOTSTRAP-SERVERS: 'broker:9099'
+
+  postgres_user_service:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: kattsyn
+      POSTGRES_PASSWORD: katt
+      POSTGRES_DB: user_service_db
+    ports:
+      - "5432:5432"
+
+  postservice:
+    build:
+      context: ../PostService/.
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+    depends_on:
+      - postgres_post_service
+      - broker
+    environment:
+      GRPC_SERVER_PORT: 9090
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_post_service:5433/post_service_db
+      SPRING_DATASOURCE_USER: kattsyn
+      SPRING_DATASOURCE_PASSWORD: katt
+      SPRING_JPA_HIBERNATE_DDL-AUTO: create
+      KAFKA_PRODUCER_BOOTSTRAP-SERVERS: 'broker:9099'
+
+  postgres_post_service:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: kattsyn
+      POSTGRES_PASSWORD: katt
+      POSTGRES_DB: post_service_db
+      PGPORT: 5433
+    ports:
+      - "5433:5433"
+
+  statservice:
+    build:
+      context: ../StatService/.
+      dockerfile: Dockerfile
+    ports:
+      - "9091:9091"
+    depends_on:
+      - postgres_stat_service
+      - postservice
+    environment:
+      GRPC_SERVER_PORT: 9091
+      GRPC_CLIENT_POST-SERVICE_ADDRESS: postservice:9090
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_stat_service:5434/stat_service_db
+      SPRING_DATASOURCE_USER: kattsyn
+      SPRING_DATASOURCE_PASSWORD: katt
+      SPRING_JPA_HIBERNATE_DDL-AUTO: create
+      KAFKA_CONSUMER_BOOTSTRAP-SERVERS: 'broker:9099'
+
+  postgres_stat_service:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: kattsyn
+      POSTGRES_PASSWORD: katt
+      POSTGRES_DB: stat_service_db
+      PGPORT: 5434
+    ports:
+      - "5434:5434"

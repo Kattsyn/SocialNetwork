@@ -6,7 +6,7 @@ spring:
   application:
     name: SocialNetwork
   datasource:
-    url: jdbc:postgresql://postgres_user_service:5432/user_service_db
+    url: jdbc:postgresql://localhost:5432/user_service_db
     username: kattsyn
     password: katt
     driver-class-name: org.postgresql.Driver
@@ -20,7 +20,7 @@ spring:
   kafka:
     producer:
       client-id: "user-service"
-      bootstrap-servers: "broker:9099"
+      bootstrap-servers: "localhost:9099"
       properties:
         spring:
           json:

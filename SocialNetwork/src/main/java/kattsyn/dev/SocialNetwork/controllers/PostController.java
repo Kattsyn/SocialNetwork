@@ -22,14 +22,6 @@ public class PostController {
 
     private final PostServiceGrpc postService;
 
-    private final KafkaSender kafkaSender;
-
-    @Operation(summary = "Дернуть отправку сообщения по кафке")
-    @SecurityRequirement(name = "JWT")
-    @PostMapping("/sendMessage")
-    public void sendMessage() {
-        //kafkaSender.sendEvent(new Event(Events.EVENT_LIKE, 1L, 1L), "event");
-    }
 
     @Operation(summary = "Получение записи по ID", description = "Возвращает информацию о записи.")
     @SecurityRequirement(name = "JWT")
@@ -63,8 +55,8 @@ public class PostController {
 
     @Operation(summary = "Редактирование записи", description = "Возвращает информацию о записи. Авторизованным пользователям, нужно быть автором поста, либо админом.")
     @SecurityRequirement(name = "JWT")
-    @PatchMapping("")
-    public ResponseEntity<?> editPostById(@RequestBody EditPostRequestDTO requestDTO, Principal principal) throws AppException {
-        return ResponseEntity.ok(postService.editPost(requestDTO, principal));
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> editPostById(@PathVariable Long id, @RequestBody EditPostRequestDTO requestDTO, Principal principal) throws AppException {
+        return ResponseEntity.ok(postService.editPost(id, requestDTO, principal));
     }
 }

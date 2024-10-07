@@ -83,9 +83,9 @@ public class PostServiceGrpc {
         }
     }
 
-    public String editPost(EditPostRequestDTO requestDTO, Principal principal) throws AppException {
+    public String editPost(Long id, EditPostRequestDTO requestDTO, Principal principal) throws AppException {
         EditPostRequest.Builder builder = EditPostRequest.newBuilder()
-                .setPostId(requestDTO.getPostId())
+                .setPostId(id)
                 .setUserId(getUserIdByPrincipal(principal));
         if (requestDTO.getHeader() != null) {
             builder.setHeader(requestDTO.getHeader());
