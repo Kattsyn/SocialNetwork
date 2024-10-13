@@ -77,7 +77,7 @@ public class StatController {
     @Operation(summary = "Получить кол-во просмотров поста по его ID", description = "Для авторизованных пользователей")
     @SecurityRequirement(name = "JWT")
     @GetMapping("/postViewsById/{postId}")
-    public ResponseEntity<Integer> getViewsById(Long postId) throws AppException {
+    public ResponseEntity<Integer> getViewsById(@PathVariable Long postId) throws AppException {
         return ResponseEntity.ok(statServiceGrpc.getViewsById(postId));
     }
 }
